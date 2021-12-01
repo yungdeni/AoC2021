@@ -13,19 +13,16 @@ let threeMeasurement input =
     |> Array.windowed 3
     |> Array.map Array.sum
     |> pair
-    |> Array.map findIncreases
-    |> Array.sum
+    |> Array.sumBy findIncreases
 
 
 [<EntryPoint>]
 let main argv =
     let input =
-        File.ReadAllLines("../../../input.txt")
+        File.ReadAllLines("./input.txt")
         |> Array.map int
-
     let Part1 =
         pair input |> Array.map findIncreases |> Array.sum
-
     let Part2 = threeMeasurement input
     printfn "Part 1: %i" Part1
     printfn ""
