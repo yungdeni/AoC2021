@@ -1,5 +1,5 @@
 ﻿open System.IO
-
+type Generator = Carbon | Oxygen
 let bitwisex a b = 
     a ^^^ b
 let binaryToInt stringbinary = 
@@ -32,30 +32,21 @@ let bitcountHelper input ind  =
     |> List.skip ind
 
 
-let OxyFilterOuter (inp:string[]) (mask:string list) =
-    let rec Oxyfilter (inp:string[]) (mask:string list) (ind:int) = 
+let LifeFilterOuter (inp:string[]) (mask:string list) (gen:Generator) =
+    let rec LifeFilter (inp:string[]) (mask:string list) (ind:int) = 
         let iterMask = 
-            bitcountHelper inp (ind + 1) 
+            match gen with
+            |Carbon -> bitcountHelper inp (ind + 1) |> List.map invertBits
+            |Oxygen -> bitcountHelper inp (ind + 1)
         match inp with
         |inp when inp.Length = 1 -> inp
-        |_ ->  Oxyfilter (filter inp iterMask (ind+1)) iterMask.Tail (ind+1)
-    Oxyfilter inp mask -1
-let CarbFilterOuter (inp:string[]) (mask:string list) =
-    let rec Carbfilter (inp:string[]) (mask:string list) (ind:int) = 
-        let iterMask = 
-            bitcountHelper inp (ind + 1) 
-            |> List.map invertBits
-            
-        match inp with
-        |inp when inp.Length = 1 -> inp
-        |_ ->  Carbfilter (filter inp iterMask (ind+1)) iterMask.Tail (ind+1)
-    Carbfilter inp mask -1
+        |_ ->  LifeFilter (filter inp iterMask (ind+1)) iterMask.Tail (ind+1)
+    LifeFilter inp mask -1
 
 [<EntryPoint>]
 let main argv =
     let input =
         File.ReadAllLines(__SOURCE_DIRECTORY__ + "/input.txt")
-
 
     let part1list = 
         bitcountHelper input 0 
@@ -70,19 +61,18 @@ let main argv =
         |> List.fold (+) ""
         |> binaryToInt
     let part2Oxy = 
-        OxyFilterOuter input part1list
+        LifeFilterOuter input part1list Oxygen
         |> Array.toList
         |>List.fold (+) ""
         |>binaryToInt
     let part2Carb = 
-        CarbFilterOuter input part1list
+        LifeFilterOuter input part1list Carbon
         |> Array.toList
         |>List.fold (+) ""
         |>binaryToInt
 
     let part1 = gamma * epsilon
     let part2 = part2Oxy * part2Carb
-    let test = uint "1"
     printfn "Part1 %i" part1
     printfn "Part2 %i" part2
     0 // return an integer exit code
