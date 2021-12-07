@@ -38,6 +38,7 @@ let takeJustBingos bingo =
     match bingoChecker flatBingo with
     | false -> None
     | true -> Some bingo
+
 let takeNotBingos bingo = 
     let flatBingo = bingoFlatter bingo
     match bingoChecker flatBingo with
@@ -47,7 +48,7 @@ let takeNotBingos bingo =
 let playoneRoundBingo numberToDraw bingos = 
         bingos
         |> List.map (crossOut numberToDraw)
-        // |> List.choose takeJustBingos
+
 let playBingo (numbersToDraw:int list) bingos = 
     let rec inner (numbersToDraw:int list) bingos = 
         let bingoafterdraw = playoneRoundBingo numbersToDraw.[0] bingos
@@ -56,6 +57,7 @@ let playBingo (numbersToDraw:int list) bingos =
         |[] -> inner numbersToDraw.Tail bingoafterdraw
         |_ -> (Array2D.map (fun v -> if v = -1 then 0 else v) res.[0], numbersToDraw.[0])
     inner numbersToDraw bingos
+
 let playNotBingo (numbersToDraw:int list) bingos = 
     let rec inner (numbersToDraw:int list) bingos = 
         let bingoafterdraw = playoneRoundBingo numbersToDraw.[0] bingos
@@ -63,9 +65,7 @@ let playNotBingo (numbersToDraw:int list) bingos =
         match res  with
         |res when res.Length = 1 -> playBingo numbersToDraw.Tail res
         |_ -> inner numbersToDraw.Tail bingoafterdraw
-
     inner numbersToDraw bingos
-
 
 [<EntryPoint>]
 let main argv =
@@ -76,16 +76,12 @@ let main argv =
         |> Array.map int
         |> Array.toList
     let bingos = 
-        input
+        (List.map (splitSpace >> (Array.map int)) (input
         |> Array.skip 1
         |> Array.filter (fun i -> i <> "")
-        |> Array.toList
-        |> List.map splitSpace
-        |> List.map (Array.map int)
+        |> Array.toList))
         |> List.chunkBySize 5
         |> List.map joinInto2D
-
-        // |>List.map (crossOut 7) 
     let part1bingo = 
         playBingo chosenNumbers bingos
     let winningBingo,winningnumber = part1bingo
@@ -100,7 +96,7 @@ let main argv =
     let part2sum = 
         Seq.cast<int> lastWinningBingo
         |> Seq.sum 
-    let part2 = part2sum * lastWinningNumber//    toJaggedArray bingos 5
+    let part2 = part2sum * lastWinningNumber
     printfn "Part1: %i" part1
     printfn "Part2: %i" part2
     0 // return an integer exit code
