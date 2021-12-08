@@ -101,4 +101,6 @@ let main argv =
     let part2 = 
          Array2Dflatter part2plot
          |> overlaps
+    printfn "Part 1: %i" part1
+    printfn "Part 2: %i" part2
     0 // return an integer exit code
