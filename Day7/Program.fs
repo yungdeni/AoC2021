@@ -11,15 +11,13 @@ let main argv =
         File.ReadAllLines(__SOURCE_DIRECTORY__ + "/input.txt")
         |> Array.collect split
         |> Array.map int
-    let sortedInput = 
-        input
-        |>Array.sort
+        |> Array.sort
     //Median
     let toHorzpart1 = 
-        sortedInput.[sortedInput.Length/2]
+        input.[input.Length/2]
     //Average
     let toHorzpart2 = 
-        sortedInput
+        input
         |>Array.map float
         |>Array.average
         |> (floor >> int)
